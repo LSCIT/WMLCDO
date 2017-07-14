@@ -1,0 +1,33 @@
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.0.min.js"></script>
+<div id="SPSubSitesMN"></div>
+<script type="text/javascript">
+var subsitelist = "Active Projects<ul>";
+ExecuteOrDelayUntilScriptLoaded(loadWebs, "sp.js");
+
+function loadWebs() 
+{
+    var clientContext = new SP.ClientContext.get_current();
+    this.webs = clientContext.get_site().get_rootWeb().get_webs();
+    clientContext.load(this.webs);
+    clientContext.executeQueryAsync(Function.createDelegate(this, this.onWebsLoaded), Function.createDelegate(this, this.onQueryFailed));
+}
+function onQueryFailed(sender, args) 
+{
+    alert('request failed ' + args.get_message() + '\n' + args.get_stackTrace());
+}
+function onWebsLoaded(sender, args) 
+{
+    for (var i = 0; i < this.webs.get_count(); i++) 
+    {
+        var swtitle = this.webs.itemAt(i).get_title();
+        var swurl = this.webs.itemAt(i).get_serverRelativeUrl();     
+        subsitelist = subsitelist + "<li><a href='" + swurl + "'>"+ swtitle + "</a></li>";
+    }    
+    AddUL();
+}
+function AddUL()
+{
+    subsitelist = subsitelist + "</ul>";
+    $('#SPSubSitesMN').html(subsitelist);
+}
+</script>
